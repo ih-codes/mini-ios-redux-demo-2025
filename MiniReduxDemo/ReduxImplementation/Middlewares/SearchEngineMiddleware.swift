@@ -20,14 +20,16 @@ final class SearchEnginesMiddleware {
 //        guard let action = action as? SearchEnginesActionType else { return }
 
         switch action.actionType {
-        case SearchEnginesActionType.didTapLoadEnginesButton:
+        case SearchEnginesUserActionType.didTapLoadEnginesButton:
             // IHC - Also, with better typed Actions we won't risk not passing the right info...
             searchEnginesManager.getOrderedEngines { searchEngines in
+                let demoResponse: Result<[SearchEngineModel], LoadSearchEnginesError> = searchEngines.isEmpty
+                                                                                        ? .failure(.emptyResults)
+                                                                                        : .success(searchEngines)
+
                 let action = SearchEnginesAction(
                     windowUUID: action.windowUUID,
-                    actionType: SearchEnginesMiddlewareActionType.didLoadSearchEngines,
-                    // Just a rough example of an error
-                    loadEnginesResult: searchEngines.isEmpty ? .failure(.emptyResults) : .success(searchEngines)
+                    actionType: SearchEnginesMiddlewareActionType.didLoadSearchEngines(demoResponse),
                 )
                 store.dispatch(action)
             }

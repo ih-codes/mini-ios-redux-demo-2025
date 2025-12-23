@@ -4,31 +4,23 @@
 
 import Foundation
 
+struct SearchEnginesAction: Action {
+    let windowUUID: WindowUUID
+    let actionType: SearchEnginesActionType
+}
+
 enum LoadSearchEnginesError: Error, Codable {
     case timedOut
     case emptyResults
 }
 
-struct SearchEnginesAction: Action {
-    let windowUUID: WindowUUID
-    let actionType: ActionType
-    let loadEnginesResult: Result<[SearchEngineModel], LoadSearchEnginesError>?
+public protocol SearchEnginesActionType: ActionType {}
 
-    init(
-        windowUUID: WindowUUID,
-        actionType: ActionType,
-        loadEnginesResult: Result<[SearchEngineModel], LoadSearchEnginesError>? = nil
-    ) {
-        self.windowUUID = windowUUID
-        self.actionType = actionType
-        self.loadEnginesResult = loadEnginesResult
-    }
-}
-
-enum SearchEnginesActionType: ActionType {
+enum SearchEnginesUserActionType: SearchEnginesActionType {
     case didTapLoadEnginesButton
+    case didToggleBackgroundColor
 }
 
-enum SearchEnginesMiddlewareActionType: ActionType {
-    case didLoadSearchEngines
+enum SearchEnginesMiddlewareActionType: SearchEnginesActionType {
+    case didLoadSearchEngines(Result<[SearchEngineModel], LoadSearchEnginesError>)
 }

@@ -7,8 +7,10 @@ import Foundation
 
 /// Used to describe an action that can be dispatched by the redux store
 public protocol Action: Sendable, CustomDebugStringConvertible {
+    associatedtype A = ActionType
+
     var windowUUID: WindowUUID { get }
-    var actionType: ActionType { get }
+    var actionType: A { get }
 }
 
 extension Action {

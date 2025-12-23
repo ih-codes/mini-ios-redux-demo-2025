@@ -68,7 +68,7 @@ struct SearchEnginesState: ScreenState, Codable {
         // isDeeplinkOptimizationRefactorEnabled is ... disabled maybe right now?
 
         switch action.actionType {
-        case SearchEnginesActionType.didTapLoadEnginesButton:
+        case SearchEnginesUserActionType.didTapLoadEnginesButton:
             // IHC - Temp logging we can turn on at Redux level when debugging?
             // IHC - Is there a way to return a State with one altered value that is closer to TypeScript?
             return SearchEnginesState(
@@ -76,16 +76,9 @@ struct SearchEnginesState: ScreenState, Codable {
                 searchEnginesLoadingState: .loading
             )
 
-        case SearchEnginesMiddlewareActionType.didLoadSearchEngines:
-            // IHC - Let's have better typed Actions so we don't have to check optional properties all the time
-            guard let action = action as? SearchEnginesAction,
-                  let loadEnginesResult = action.loadEnginesResult
-            else {
-                return defaultState(from: state)
-            }
-
+        case SearchEnginesMiddlewareActionType.didLoadSearchEngines(let result):
             let searchEngineLoadingState: SearchEnginesLoadingState
-            switch loadEnginesResult {
+            switch result {
             case .success(let engines):
                 searchEngineLoadingState = .succeeded(engines)
             case .failure(let error):
